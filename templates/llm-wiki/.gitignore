@@ -1,0 +1,8 @@
+# Службові файли дошки; сторінки шляху boards/progress/*.html комітяться.
+boards/*.lock
+boards/*.tmp
+boards/board.log
+boards/board.log.*
+
+__pycache__/
+*.pyc

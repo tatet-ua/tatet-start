@@ -1,0 +1,16 @@
+{
+  "name": "tatet-start",
+  "displayName": "Tatet Start",
+  "version": "0.1.0",
+  "description": "Спосіб роботи з Claude Code: база знань, що накопичується, агентний режим, дошка проєкту і склад ключів.",
+  "author": {
+    "name": "Tatet"
+  },
+  "keywords": [
+    "knowledge-base",
+    "agents",
+    "workflow",
+    "board",
+    "mentoring"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "tatet-start",
+  "owner": {
+    "name": "Tatet"
+  },
+  "metadata": {
+    "description": "Набір Tatet Start: спосіб роботи з Claude Code для студентів менторства."
+  },
+  "plugins": [
+    {
+      "name": "tatet-start",
+      "source": "./",
+      "description": "Спосіб роботи з Claude Code: база знань, агентний режим, дошка проєкту, склад ключів."
+    }
+  ]
+}

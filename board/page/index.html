@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Доска проектов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="board.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <div class="top-left">
+      <h1>Доска проектов</h1>
+      <p class="conn" id="conn-status">обновление…</p>
+    </div>
+    <div class="top-controls">
+      <label class="field">
+        <span class="field-label">Проект</span>
+        <select id="project-select" aria-label="Проект"></select>
+      </label>
+      <button type="button" class="btn btn-primary" id="new-card-btn">Новая карточка</button>
+      <button type="button" class="btn btn-ghost" id="archive-toggle" aria-pressed="false">Архив</button>
+      <button type="button" class="btn btn-ghost" id="theme-toggle">Тема: системная</button>
+    </div>
+  </header>
+
+  <section id="summary" class="summary" hidden aria-label="Сводка по всем проектам"></section>
+
+  <div class="board-wrap">
+    <main id="board" class="board" aria-label="Колонки доски"></main>
+  </div>
+
+  <div class="board-wrap" id="archive-wrap" hidden>
+    <h2 class="dlg-section-title" style="margin:0">Архив</h2>
+    <div id="archive-board" class="archive-board" aria-label="Архив"></div>
+  </div>
+
+</div>
+
+<div class="toast-region" id="toast-region" aria-live="polite"></div>
+
+<dialog id="card-dialog" aria-label="Карточка"></dialog>
+<dialog id="menu-dialog" aria-label="Переместить в"></dialog>
+<dialog id="fields-dialog" aria-label="Заполните поля"></dialog>
+<dialog id="accept-dialog" aria-label="Принять карточку"></dialog>
+<dialog id="new-card-dialog" aria-label="Новая карточка"></dialog>
+<dialog id="edit-dialog" aria-label="Править карточку"></dialog>
+<dialog id="confirm-dialog" aria-label="Подтверждение"></dialog>
+
+<script src="board.js"></script>
+</body>
+</html>
