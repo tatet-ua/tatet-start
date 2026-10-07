@@ -4,7 +4,8 @@
 Що робить:
   1. питає одне — диск (Windows) або підтвердження ~/project (macOS, Linux);
   2. створює <корінь>/DevOps (склад ключів .env і зразок .env.example) і <корінь>/llm-wiki (база знань зі схемою),
-     існуючі файли не перезаписує, .env не чіпає ніколи; у llm-wiki робить git init (без першого коміту);
+     існуючі файли не перезаписує, .env не чіпає ніколи; у llm-wiki робить git init і перший коміт схеми
+     (репозиторій з комітами не чіпає);
   3. пише змінні TATET_WIKI, TATET_DEVOPS, BOARD_DIR, BOARD_PORT у <конфіг Claude>/settings.json → "env"
      (решту файлу зберігає, перед записом робить резервну копію);
   4. дописує блок ритуалу сесії в <конфіг Claude>/CLAUDE.md між мітками (повторний запуск блок замінює, не дублює);
@@ -295,21 +296,58 @@ def make_env_file(devops: Path, log: Log) -> None:
     log.create(f"{show(target)} (порожній, лише коментарі)")
 
 
+COMMIT_MESSAGE = "База знань: схема tatet-start"
+
+
+def git_out(git: str, wiki: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run([git, "-C", str(wiki), *args], capture_output=True, text=True,
+                          encoding="utf-8", errors="replace")
+
+
 def git_init(wiki: Path, log: Log) -> None:
-    if (wiki / ".git").exists():
-        log.skip(f"{show(wiki)}: git-репозиторій уже є")
-        return
+    """git init бази і перший коміт схеми; репозиторій, де коміти вже є, не чіпає."""
+    existed = (wiki / ".git").exists()
     git = shutil.which("git")
     if not git:
-        log.info("git не знайдено: базу не зроблено git-репозиторієм")
-        log.todo(f"Встанови git і виконай в {show(wiki)}: git init")
+        if existed:
+            log.skip(f"{show(wiki)}: git-репозиторій уже є")
+        else:
+            log.info("git не знайдено: базу не зроблено git-репозиторієм")
+        log.todo("Встанови git і запусти установник ще раз: він зробить базу git-репозиторієм з першим комітом")
         return
-    if not log.dry:
-        r = subprocess.run([git, "init", "-q", str(wiki)], capture_output=True, text=True)
-        if r.returncode != 0:
-            log.problem(f"git init завершився з кодом {r.returncode}: {(r.stderr or r.stdout).strip()}")
+    if existed:
+        if git_out(git, wiki, "rev-parse", "--verify", "-q", "HEAD").returncode == 0:
+            log.skip(f"{show(wiki)}: git-репозиторій з комітами вже є")
             return
-    log.create(f"{show(wiki)}: git-репозиторій (без першого коміту)")
+        log.skip(f"{show(wiki)}: git-репозиторій уже є (без комітів)")
+    else:
+        if not log.dry:
+            r = subprocess.run([git, "init", "-q", str(wiki)], capture_output=True, text=True)
+            if r.returncode != 0:
+                log.problem(f"git init завершився з кодом {r.returncode}: {(r.stderr or r.stdout).strip()}")
+                return
+        log.create(f"{show(wiki)}: git-репозиторій")
+    if log.dry:
+        log.create(f"{show(wiki)}: перший коміт «{COMMIT_MESSAGE}»")
+        return
+    r = git_out(git, wiki, "add", "-A")
+    if r.returncode != 0:
+        log.problem(f"git add завершився з кодом {r.returncode}: {(r.stderr or r.stdout).strip()}")
+        return
+    if git_out(git, wiki, "diff", "--cached", "--quiet").returncode == 0:
+        log.skip(f"{show(wiki)}: нічого комітити, файли вже в git")
+        return
+    identity: list[str] = []  # без глобальних user.name і user.email git коміт не зробить
+    if not git_out(git, wiki, "config", "user.name").stdout.strip():
+        identity += ["-c", "user.name=tatet-start"]
+    if not git_out(git, wiki, "config", "user.email").stdout.strip():
+        identity += ["-c", "user.email=tatet-start@localhost"]
+    r = subprocess.run([git, "-C", str(wiki), *identity, "commit", "-q", "-m", COMMIT_MESSAGE],
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    if r.returncode != 0:
+        log.problem(f"git commit завершився з кодом {r.returncode}: {(r.stderr or r.stdout).strip()}")
+        return
+    log.create(f"{show(wiki)}: перший коміт «{COMMIT_MESSAGE}»")
 
 
 # ---------------------------------------------------------------- команда board
