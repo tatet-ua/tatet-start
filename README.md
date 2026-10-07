@@ -10,12 +10,12 @@ Claude Code, Python 3.10+ (команда `python` у терміналі), git.
 
 ## Встановлення
 ```bash
-claude plugin marketplace add <owner>/tatet-start
+claude plugin marketplace add tatet-ua/tatet-start
 claude plugin install tatet-start@tatet-start
 python "<шлях до плагіна>/scripts/setup.py"
 ```
 
-`<owner>` — точну адресу репозиторію дасть ментор. Шлях до плагіна: Claude Code тримає плагіни в
+Шлях до плагіна: Claude Code тримає плагіни в
 `~/.claude/plugins/cache/tatet-start/tatet-start/<версія>/`, де `~` — твоя домашня папка.
 Установник питає одне — букву диска (на macOS і Linux — підтвердити `~/project`). Після нього з'являться
 `<диск>:/project/DevOps` (склад ключів), `<диск>:/project/llm-wiki` (база знань) і команда `board`.
