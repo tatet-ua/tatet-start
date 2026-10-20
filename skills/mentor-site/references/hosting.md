@@ -4,8 +4,9 @@
 
 - Claude (приложение и claude.ai): «Настройки → Коннекторы → Добавить свой коннектор» → название `tatet.mentor`,
   адрес `https://mentor.tatet.app/mcp` → «Подключить» → вход через Tatet Auth.
-- Claude Code в терминале: `claude mcp add --transport http tatet.mentor https://mentor.tatet.app/mcp`, затем в
-  сессии `/mcp` → `tatet.mentor` → Authenticate.
+- Claude Code в терминале: `claude mcp add --transport http --callback-port 33418 tatet.mentor https://mentor.tatet.app/mcp`,
+  затем в сессии `/mcp` → `tatet.mentor` → Authenticate. Без `--callback-port 33418` вход отклоняется. Точная
+  команда есть и на странице ссылки от ментора.
 - Вход проходит, а `me` отвечает отказом — почта студента не совпадает с почтой в карточке аккаунта у ментора.
 
 ## Лимиты аккаунта
